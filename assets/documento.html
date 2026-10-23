@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>$titulo_doc</title>
+<style>
+$fontes
+
+:root {
+  --tinta: $c_tinta;
+  --escuro: $c_escuro;
+  --primaria: $c_primaria;
+  --primaria-escura: $c_primaria_escura;
+  --primaria-clara: $c_primaria_clara;
+  --destaque: $c_destaque;
+  --cinza: $c_cinza;
+  --linha: $c_linha;
+  --fundo-suave: $c_fundo_suave;
+  --f-titulo: "$f_titulo", Georgia, serif;
+  --f-texto: "$f_texto", "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ---------- páginas internas: timbre por @page ---------- */
+@page {
+  size: A4;
+  margin: ${m_top}mm ${m_right}mm ${m_bottom}mm ${m_left}mm;
+  /* a origem do fundo é a área de conteúdo: desloca pelas margens */
+  background: url("$papel_svg") no-repeat -${m_left}mm -${m_top}mm / 210mm 297mm;
+  @top-left {
+    content: url("$logo_cabecalho");
+    vertical-align: bottom;
+    padding-bottom: ${pad_logo}mm;
+  }
+  @top-right {
+    content: "$cabecalho_txt";
+    vertical-align: bottom;
+    padding-bottom: ${pad_cab_txt}mm;
+    font: 600 6.3pt var(--f-texto);
+    letter-spacing: .22em;
+    color: var(--cinza);
+    text-align: right;
+  }
+  @bottom-left {
+    content: "$rodape_txt";
+    white-space: pre;
+    vertical-align: top;
+    padding-top: ${pad_rod}mm;
+    font: 400 6.8pt/1.55 var(--f-texto);
+    letter-spacing: .02em;
+    color: var(--cinza);
+  }
+  @bottom-right {
+    content: counter(page, decimal-leading-zero);
+    vertical-align: top;
+    padding-top: ${pad_num}mm;
+    font: 700 11pt var(--f-titulo);
+    color: var(--primaria);
+  }
+}
+
+/* ---------- capa: página nomeada, sangrada, sem timbre ---------- */
+@page capa {
+  margin: 0;
+  background: var(--escuro);
+  @top-left { content: none; }
+  @top-right { content: none; }
+  @bottom-left { content: none; }
+  @bottom-right { content: none; }
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font: 400 9.6pt/1.62 var(--f-texto);
+  color: var(--tinta);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  font-variant-numeric: lining-nums;
+  hyphens: auto;
+}
+
+.capa {
+  page: capa;
+  position: relative;
+  width: 210mm;
+  height: 296.6mm;
+  overflow: hidden;
+  color: #fff;
+  background:
+    radial-gradient(120mm 120mm at 78% 58%, rgba(224,174,46,.10), transparent 70%),
+    radial-gradient(160mm 140mm at 12% 0%, rgba(255,255,255,.035), transparent 70%),
+    var(--escuro);
+}
+.capa .simbolo {
+  position: absolute;
+  right: -46mm;
+  bottom: 18mm;
+  height: 205mm;
+  opacity: .085;
+}
+.capa .logo { position: absolute; left: 24mm; top: 24mm; width: 74mm; }
+.capa .miolo { position: absolute; left: 24mm; right: 30mm; top: 118mm; }
+.capa .rotulo {
+  font: 600 8.5pt var(--f-texto);
+  letter-spacing: .38em;
+  text-transform: uppercase;
+  color: var(--primaria-clara);
+}
+.capa .fio { width: 18mm; height: .8pt; background: var(--primaria-clara); margin: 6mm 0 7mm; }
+.capa h1 {
+  font: 700 33pt/1.08 var(--f-titulo);
+  margin: 0;
+  max-width: 150mm;
+  letter-spacing: -.005em;
+  text-wrap: balance;
+}
+.capa .sub {
+  font: italic 400 14pt/1.35 var(--f-titulo);
+  color: var(--primaria-clara);
+  margin-top: 6mm;
+  max-width: 140mm;
+}
+.capa .dados {
+  position: absolute;
+  left: 24mm; right: 24mm; bottom: 34mm;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8mm;
+  border-top: .6pt solid rgba(224,174,46,.55);
+  padding-top: 5mm;
+}
+.capa .dados .k {
+  font: 600 6.5pt var(--f-texto);
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  color: var(--primaria-clara);
+  margin-bottom: 1.6mm;
+}
+.capa .dados .v { font: 400 9.5pt/1.45 var(--f-texto); color: rgba(255,255,255,.88); }
+.capa .contatos {
+  position: absolute;
+  left: 24mm; right: 24mm; bottom: 15mm;
+  font: 400 6.8pt/1.6 var(--f-texto);
+  letter-spacing: .04em;
+  color: rgba(255,255,255,.5);
+}
+
+/* ---------- miolo ---------- */
+.corpo { padding-top: 1mm; }
+.corpo > :first-child { margin-top: 0; }
+.abertura .rotulo {
+  font: 600 7.5pt var(--f-texto);
+  letter-spacing: .32em;
+  text-transform: uppercase;
+  color: var(--primaria);
+}
+.abertura h1 {
+  font: 700 22pt/1.12 var(--f-titulo);
+  color: var(--escuro);
+  margin: 2.5mm 0 2mm;
+}
+.abertura .sub { font: italic 400 12pt/1.4 var(--f-titulo); color: var(--primaria-escura); }
+.abertura .meta {
+  font: 400 8pt/1.5 var(--f-texto);
+  color: var(--cinza);
+  margin: 4mm 0 8mm;
+  padding-bottom: 4mm;
+  border-bottom: .5pt solid var(--linha);
+}
+
+p { margin: 0 0 3.2mm; text-align: justify; orphans: 3; widows: 3; }
+h2 {
+  font: 700 15.5pt/1.2 var(--f-titulo);
+  color: var(--escuro);
+  margin: 9mm 0 3.5mm;
+  break-after: avoid;
+  page-break-after: avoid;
+}
+h2::before {
+  content: "";
+  display: block;
+  width: 12mm;
+  height: .9pt;
+  background: var(--primaria);
+  margin-bottom: 3.5mm;
+}
+h3 {
+  font: 700 8.2pt/1.3 var(--f-texto);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--primaria-escura);
+  margin: 6mm 0 2mm;
+  break-after: avoid;
+}
+blockquote {
+  margin: 2mm 0 6mm;
+  padding: 4mm 5mm 4mm 6mm;
+  background: var(--fundo-suave);
+  border-left: 2.4pt solid var(--primaria);
+  font-style: italic;
+  font-size: 9.2pt;
+  break-inside: avoid;
+}
+blockquote p:last-child { margin-bottom: 0; }
+ul, ol { margin: 0 0 3.6mm; padding-left: 5.5mm; }
+li { margin: 0 0 1.6mm; text-align: left; }
+li::marker { color: var(--primaria); font-weight: 700; }
+strong { font-weight: 700; color: var(--escuro); }
+a { color: var(--primaria-escura); text-decoration: none; border-bottom: .4pt solid var(--linha); }
+table { width: 100%; border-collapse: collapse; margin: 3mm 0 6mm; font-size: 8.6pt; break-inside: avoid; }
+th {
+  font: 600 6.8pt var(--f-texto);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--primaria-escura);
+  text-align: left;
+  border-bottom: .8pt solid var(--primaria);
+  padding: 2mm 2mm 1.6mm;
+}
+td { border-bottom: .4pt solid var(--linha); padding: 2mm; vertical-align: top; }
+
+span[data-custom-style="Pendente"] {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--primaria-escura);
+  background: rgba(224,174,46,.17);
+  border-radius: 1.5pt;
+  padding: 0 1.4pt;
+}
+div[data-custom-style="Assinatura"] {
+  margin-top: 16mm;
+  width: 78mm;
+  border-top: .7pt solid var(--primaria);
+  padding-top: 3mm;
+  break-inside: avoid;
+}
+div[data-custom-style="Assinatura"] p {
+  font: 700 12pt/1.3 var(--f-titulo);
+  color: var(--escuro);
+  margin: 0;
+  text-align: left;
+}
+div[data-custom-style="Cargo"] p {
+  font: 400 8pt/1.5 var(--f-texto);
+  color: var(--cinza);
+  margin: .6mm 0 0;
+  text-align: left;
+}
+div[data-custom-style="Local e data"] p { margin-top: 10mm; text-align: left; }
+
+/* notas e fontes (rodapés do pandoc vão para o fim) */
+section.footnotes, aside.footnotes, .footnotes {
+  margin-top: 12mm;
+  padding-top: 3mm;
+  border-top: .5pt solid var(--linha);
+  font-size: 7.6pt;
+  line-height: 1.5;
+  color: var(--cinza);
+}
+.footnotes hr { display: none; }
+.footnotes::before {
+  content: "Notas e fontes";
+  display: block;
+  font: 600 6.8pt var(--f-texto);
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--primaria-escura);
+  margin-bottom: 2mm;
+}
+.footnotes ol { padding-left: 4mm; }
+.footnotes li { margin-bottom: 1.2mm; }
+.footnote-back { display: none; }
+a.footnote-ref { border: 0; color: var(--primaria); font-weight: 700; }
+a.footnote-ref sup { font-size: 6.5pt; }
+</style>
+</head>
+<body>
+$capa
+<main class="corpo">
+$abertura
+$corpo
+</main>
+</body>
+</html>

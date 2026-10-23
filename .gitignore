@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.DS_Store
+*.local.json
+.env*
+# saídas geradas do exemplo (recrie com os comandos do README)
+exemplos/*/saida/
+exemplos/*/fonts/
+exemplos/*/logo/

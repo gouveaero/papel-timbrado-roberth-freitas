@@ -1,0 +1,38 @@
+{
+  "_origem": "Escritório fictício, só para teste da skill.",
+  "nome": "Almeida & Prado Advogados",
+  "nome_curto": "Almeida & Prado",
+  "tagline": null,
+  "site": "exemplo.adv.br",
+  "contatos": {
+    "endereco": "Rua Exemplo, 100, Centro · Cidade/UF",
+    "telefone": "(00) 0000-0000",
+    "email": "contato@exemplo.adv.br"
+  },
+  "oab": "OAB/UF 0.000",
+  "cores": {
+    "tinta": "#1B1F2A",
+    "escuro": "#14213D",
+    "primaria": "#9C6B30",
+    "primaria_escura": "#7A5224",
+    "primaria_clara": "#D8B987",
+    "destaque": "#E8D5B5",
+    "cinza": "#5B6170",
+    "linha": "#D8D2C4",
+    "fundo_suave": "#F6F3EC",
+    "papel": "#FFFFFF"
+  },
+  "fontes": {
+    "titulo": {"familia": "Cormorant Garamond", "regular": "fonts/CormorantGaramond-SemiBold.ttf", "bold": "fonts/CormorantGaramond-Bold.ttf", "italic": "fonts/CormorantGaramond-Italic.ttf"},
+    "texto": {"familia": "Source Sans 3", "regular": "fonts/SourceSans3-Regular.ttf", "bold": "fonts/SourceSans3-Bold.ttf", "italic": "fonts/SourceSans3-Italic.ttf", "semibold": "fonts/SourceSans3-SemiBold.ttf"}
+  },
+  "logo": {
+    "papel": "logo/logo-assinatura-bronze.svg",
+    "papel_png": "logo/logo-assinatura-bronze.png",
+    "escuro": "logo/logo-assinatura-claro.svg",
+    "simbolo": "logo/logo-simbolo-bronze.svg",
+    "simbolo_png": "logo/logo-simbolo-bronze.png",
+    "simbolo_escuro": "logo/logo-simbolo-claro.svg"
+  },
+  "documento": {"autor": "Almeida & Prado Advogados", "local": "Cidade/UF", "logo_mm": 54, "marca_dagua_pdf": true, "marca_dagua_docx": false}
+}

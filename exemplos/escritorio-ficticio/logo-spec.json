@@ -1,0 +1,18 @@
+{
+  "_fonte": "Escritório fictício para testar a skill. Símbolo geométrico desenhado à mão.",
+  "simbolo": {"svg": "fonte-logo/simbolo.svg"},
+  "altura_simbolo": 1000,
+  "coluna_texto": {"recuo": 120},
+  "linhas": [
+    {"texto": "ALMEIDA & PRADO", "fonte": "fonts/CormorantGaramond-Bold.ttf", "topo": 250, "altura_caixa": 330},
+    {"texto": "ADVOGADOS", "fonte": "fonts/SourceSans3-SemiBold.ttf", "topo": 690, "altura_caixa": 110, "tracking": 420}
+  ],
+  "margem": 20,
+  "cores": {
+    "bronze": {"gradiente": ["#7A5224", "#9C6B30", "#C9A06A", "#9C6B30"], "angulo": 30},
+    "claro": {"solido": "#D8B987"},
+    "preto": {"solido": "#14213D"},
+    "branco": {"solido": "#FFFFFF"}
+  },
+  "png_largura": 2400
+}
