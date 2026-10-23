@@ -7,7 +7,7 @@ controlado. Fios finos (separação entre letras sobrepostas) entram como traço
 vetorial exato, subtraído por operação booleana, em vez de virem do bitmap.
 
     python3 vetorizar_simbolo.py <mascara.png> <saida.svg> [--fios fios.json]
-        [--suavizar 0.008] [--canto 50] [--janela 0.010] [--reta 0.0018] [--reta-min 0.065]
+        [--suavizar 0.008] [--canto 50] [--janela 0.010] [--reta 0.0018] [--reta-min 0.08] [--eixo 2.5]
         [--erro 0.0006] [--min-area 0.0004]
 
 --suavizar  desvio do desfoque ao longo do contorno (tira serrilhado de textura)
@@ -15,6 +15,8 @@ vetorial exato, subtraído por operação booleana, em vez de virem do bitmap.
 --janela    distância usada para medir o ângulo do canto
 --reta      desvio máximo para um trecho ser endireitado
 --reta-min  comprimento mínimo do trecho reto (curvas abertas não viram reta)
+--eixo      retas a menos desse ângulo (graus) do eixo viram exatamente horizontais/verticais
+--alinhar  retas de eixo mais próximas que isso passam a ter a mesma coordenada
 --erro      erro máximo do ajuste das Bézier
 
 Medidas relativas ao maior lado da máscara (0.004 = 0,4%).
@@ -86,33 +88,90 @@ def suavizar_trecho(seg, sigma):
     return s + (seg[0] - s[0]) * (1 - t) + (seg[-1] - s[-1]) * t
 
 
-def endireitar(seg, tol, comprimento_min):
-    """Projeta na reta os trechos que já são retos dentro da tolerância."""
-    if len(seg) < 4:
-        return seg
-    vert = measure.approximate_polygon(seg, tolerance=tol)
-    out = seg.copy()
-    # índices dos vértices do RDP no trecho original
-    pos = [int(np.argmin(np.hypot(*(seg - v).T))) for v in vert]
-    for a, b in zip(pos[:-1], pos[1:]):
+def _reta(pts):
+    c = pts.mean(0)
+    _, _, vt = np.linalg.svd(pts - c)
+    return c, vt[0]
+
+
+def _desvio(pts, c, u):
+    rel = pts - c
+    return rel[:, 0] * u[1] - rel[:, 1] * u[0]
+
+
+def _curva_de_um_lado(sd, tol):
+    interno = sd[len(sd) // 10: len(sd) - len(sd) // 10] if len(sd) > 20 else sd
+    lado = np.mean(interno > 0)
+    return (lado > 0.8 or lado < 0.2) and np.abs(sd).max() > 0.25 * tol
+
+
+def _encaixe_eixo(pts, c, u, graus, tol):
+    """Reta a menos de `graus` do eixo vira exatamente horizontal ou vertical."""
+    ang = math.degrees(math.atan2(u[1], u[0])) % 180
+    for alvo, eixo in ((0, (1.0, 0.0)), (180, (1.0, 0.0)), (90, (0.0, 1.0))):
+        if abs(ang - alvo) <= graus:
+            ue = np.array(eixo)
+            if np.abs(_desvio(pts, c, ue)).max() <= tol * 1.4:
+                return c, ue
+    return c, u
+
+
+def retas(seg, tol, comprimento_min, graus_eixo, encosta=0):
+    """Trechos retos do segmento: [(a, b, centro, direção)], já fundidos e encaixados no eixo.
+    Reta que termina a menos de `encosta` amostras do canto é estendida até ele."""
+    if len(seg) < 6:
+        return []
+    vert = measure.approximate_polygon(seg, tolerance=tol * 0.8)
+    idx, j = [], 0
+    for v in vert:                                  # o RDP devolve pontos do próprio trecho, em ordem
+        while j < len(seg) - 1 and not np.allclose(seg[j], v):
+            j += 1
+        idx.append(j)
+    cand = []
+    for a, b in zip(idx[:-1], idx[1:]):
         if b - a < 3:
             continue
-        A, B = seg[a], seg[b]
-        L = np.hypot(*(B - A))
-        if L < comprimento_min:
+        pts = seg[a:b + 1]
+        c, u = _reta(pts)
+        sd = _desvio(pts, c, u)
+        if np.abs(sd).max() <= tol and not _curva_de_um_lado(sd, tol):
+            cand.append([a, b])
+    # funde vizinhos colineares (o RDP às vezes parte uma reta em duas com ângulos quase iguais)
+    fundidos = []
+    for a, b in cand:
+        if fundidos and a - fundidos[-1][1] <= 2:
+            a0 = fundidos[-1][0]
+            c, u = _reta(seg[a0:b + 1])
+            if np.abs(_desvio(seg[a0:b + 1], c, u)).max() <= tol:
+                fundidos[-1][1] = b
+                continue
+        fundidos.append([a, b])
+    out = []
+    for a, b in fundidos:
+        pts = seg[a:b + 1]
+        if np.hypot(*(pts[-1] - pts[0])) < comprimento_min:
             continue
-        u = (B - A) / L
-        rel = seg[a:b + 1] - A
-        sd = rel[:, 0] * u[1] - rel[:, 1] * u[0]
-        if np.abs(sd).max() > tol:
-            continue
-        # arco suave fica todo de um lado da corda: não é reta, é curva aberta
-        interno = sd[len(sd) // 10: len(sd) - len(sd) // 10] if len(sd) > 20 else sd
-        lado = np.mean(interno > 0)
-        if (lado > 0.85 or lado < 0.15) and np.abs(sd).max() > 0.35 * tol:
-            continue
-        out[a:b + 1] = A + np.outer((rel * u).sum(1), u)
+        c, u = _encaixe_eixo(pts, *_reta(pts), graus_eixo, tol)
+        if np.dot(pts[-1] - pts[0], u) < 0:
+            u = -u
+        if a <= encosta:
+            a = 0
+        if b >= len(seg) - 1 - encosta:
+            b = len(seg) - 1
+        out.append((a, b, c, u))
     return out
+
+
+def _proj(p, c, u):
+    return c + np.dot(p - c, u) * u
+
+
+def _cruza(c1, u1, c2, u2):
+    A = np.array([u1, -u2]).T
+    if abs(np.linalg.det(A)) < 1e-6:
+        return None
+    t = np.linalg.solve(A, c2 - c1)[0]
+    return c1 + t * u1
 
 
 # ---------------------------------------------------------------- Bézier (Schneider, Graphics Gems I)
@@ -215,23 +274,110 @@ def contorno_para_path(xy, escala, args, path):
     sigma = max(escala * args.suavizar / passo, 1.0)
     tol = escala * args.reta
     erro = escala * args.erro
+    pen = path.getPen()
     if not cs:
         # laço sem canto: suaviza periodicamente e ajusta a partir do ponto 0
         s = np.c_[ndi.gaussian_filter1d(p[:, 0], sigma, mode="wrap"), ndi.gaussian_filter1d(p[:, 1], sigma, mode="wrap")]
-        segs = [np.vstack([s, s[:1]])]
-    else:
-        segs = []
-        for a, b in zip(cs, cs[1:] + [cs[0] + len(p)]):
-            idx = np.arange(a, b + 1) % len(p)
-            seg = suavizar_trecho(p[idx], sigma)
-            segs.append(endireitar(seg, tol, escala * args.reta_min))
-    pen = path.getPen()
-    pen.moveTo(tuple(segs[0][0]))
-    for seg in segs:
-        if len(seg) < 2:
-            continue
-        for c in ajustar(seg, tangente(seg, True), tangente(seg, False), erro):
+        s = np.vstack([s, s[:1]])
+        pen.moveTo(tuple(s[0]))
+        for c in ajustar(s, tangente(s, True), tangente(s, False), erro):
             pen.curveTo(tuple(c[1]), tuple(c[2]), tuple(c[3]))
+        pen.closePath()
+        return
+
+    # segmentos entre cantos, suavizados, com as retas detectadas
+    segs, rets = [], []
+    for a, b in zip(cs, cs[1:] + [cs[0] + len(p)]):
+        idx = np.arange(a, b + 1) % len(p)
+        seg = suavizar_trecho(p[idx], sigma)
+        segs.append(seg)
+        rets.append(retas(seg, tol, escala * args.reta_min, args.eixo, encosta=k))
+
+    # alinha retas de eixo quase coincidentes (ex.: a borda da haste acima e abaixo de um braço)
+    lim = escala * args.alinhar
+    for eixo, comp in (("x", 0), ("y", 1)):
+        itens = [(rs[j][2][comp], i, j) for i, rs in enumerate(rets) for j in range(len(rs))
+                 if abs(rets[i][j][3][comp]) < 1e-9]              # vertical: u=(0,±1) → alinha x
+        itens.sort()
+        grupos, atual_g = [], []
+        for item in itens:
+            if atual_g and item[0] - atual_g[-1][0] > lim:
+                grupos.append(atual_g); atual_g = []
+            atual_g.append(item)
+        if atual_g:
+            grupos.append(atual_g)
+        for g in grupos:
+            if len(g) < 2:
+                continue
+            media = float(np.mean([v for v, _, _ in g]))
+            for _, i, j in g:
+                a, b, c, u = rets[i][j]
+                c = c.copy(); c[comp] = media
+                rets[i][j] = (a, b, c, u)
+
+    # cantos: interseção de duas retas que chegam nele; senão, projeção na reta que chega
+    n = len(segs)
+    canto = []
+    for i in range(n):
+        anterior, seguinte = rets[i - 1], rets[i]
+        ponto = segs[i][0]
+        ra = anterior[-1] if anterior and anterior[-1][1] == len(segs[i - 1]) - 1 else None
+        rb = seguinte[0] if seguinte and seguinte[0][0] == 0 else None
+        if ra and rb:
+            x = _cruza(ra[2], ra[3], rb[2], rb[3])
+            if x is not None and np.hypot(*(x - ponto)) < escala * 0.02:
+                ponto = x
+            else:
+                ponto = _proj(ponto, rb[2], rb[3])
+        elif ra:
+            ponto = _proj(ponto, ra[2], ra[3])
+        elif rb:
+            ponto = _proj(ponto, rb[2], rb[3])
+        canto.append(np.asarray(ponto, float))
+
+    pen.moveTo(tuple(canto[0]))
+    for i, (seg, rs) in enumerate(zip(segs, rets)):
+        fim_seg = canto[(i + 1) % n]
+        pecas, cur = [], 0
+        for a, b, c, u in rs:
+            if a > cur:
+                pecas.append(("C", cur, a, None))
+            pecas.append(("L", a, b, (c, u)))
+            cur = b
+        if cur < len(seg) - 1:
+            pecas.append(("C", cur, len(seg) - 1, None))
+        atual = canto[i]
+        for j, (tipo, a, b, reta) in enumerate(pecas):
+            ultimo = j == len(pecas) - 1
+            if tipo == "L":
+                c, u = reta
+                if ultimo:
+                    fim_p = fim_seg
+                elif pecas[j + 1][0] == "L":
+                    # duas retas seguidas: o encontro é a interseção, não a projeção numa delas
+                    x = _cruza(c, u, *pecas[j + 1][3])
+                    fim_p = x if x is not None and np.hypot(*(x - seg[b])) < escala * 0.02 else _proj(seg[b], c, u)
+                else:
+                    fim_p = _proj(seg[b], c, u)
+                pen.lineTo(tuple(fim_p))
+                atual = fim_p
+            else:
+                prox = pecas[j + 1] if not ultimo else None
+                fim_p = fim_seg if ultimo else _proj(seg[b], *prox[3])
+                # a curva acompanha o deslocamento das retas vizinhas (encaixe no eixo, alinhamento,
+                # interseção): sem isso sobra um "gancho" na junção
+                pts = seg[a:b + 1].copy()
+                t = np.linspace(0, 1, len(pts))[:, None]
+                pts = pts + (atual - seg[a]) * (1 - t) + (fim_p - seg[b]) * t
+                ant = pecas[j - 1] if j > 0 else None
+                t1 = ant[3][1] if ant and ant[0] == "L" else tangente(pts, True)
+                t2 = -prox[3][1] if prox and prox[0] == "L" else tangente(pts, False)
+                if len(pts) < 3 or np.hypot(*(fim_p - atual)) < 1e-6:
+                    pen.lineTo(tuple(fim_p))
+                else:
+                    for cb in ajustar(pts, _unit(t1), _unit(t2), erro):
+                        pen.curveTo(tuple(cb[1]), tuple(cb[2]), tuple(cb[3]))
+                atual = fim_p
     pen.closePath()
 
 
@@ -275,7 +421,9 @@ def main():
     ap.add_argument("--canto", type=float, default=50)
     ap.add_argument("--janela", type=float, default=0.010)
     ap.add_argument("--reta", type=float, default=0.0018)
-    ap.add_argument("--reta-min", type=float, default=0.065)
+    ap.add_argument("--reta-min", type=float, default=0.08)
+    ap.add_argument("--eixo", type=float, default=2.5)
+    ap.add_argument("--alinhar", type=float, default=0.002)
     ap.add_argument("--erro", type=float, default=0.0006)
     ap.add_argument("--min-area", type=float, default=0.0004)
     args = ap.parse_args()

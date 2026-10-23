@@ -20,10 +20,15 @@ Sem alfa útil, faça upscale de precisão no Magnific (`images_upscale`, `ultra
 4. **Vetorizar:** `python3 scripts/vetorizar_simbolo.py silhueta.png simbolo.svg --fios fios.json`.
    - Contorno subpixel e cantos detectados por ângulo.
    - Cada trecho entre cantos é suavizado, com os cantos fixos.
-   - Trecho longo e sem curvatura de um lado só vira reta.
-   - Ajuste Bézier cúbico com erro controlado (Schneider).
+   - Trecho longo e sem curvatura de um lado só vira **segmento de reta exato** (não Bézier quase reta: é isso que deixa a logo "tortinha").
+   - Reta a menos de 2,5° do eixo encaixa exatamente na horizontal ou na vertical (`--eixo`).
+   - Retas de eixo quase coincidentes ficam com a mesma coordenada (`--alinhar`), como a borda de uma haste acima e abaixo de um braço.
+   - Duas retas seguidas, ou que chegam a um canto, se encontram na interseção exata.
+   - As curvas vizinhas acompanham o deslocamento das retas, sem gancho na junção, e saem com a tangente da reta.
+   - Curvas em Bézier cúbica com erro controlado (Schneider).
    - Os fios são subtraídos por operação booleana (skia-pathops).
-   - Resultado típico: 80 a 130 segmentos, sem buracos nem serrilhado.
+   - Resultado típico: algumas centenas de pontos, retas de verdade nos trechos retos, sem buracos nem serrilhado.
+   - Para auditar, liste os `lineTo` longos do path: as hastes devem sair `VERT` e os braços `HORIZ`, com coordenada idêntica nas duas pontas.
 5. **Conferir** em três níveis:
    - **Coincidência com o alfa original:** acima de 95%. Os fios ficam de fora, porque o alfa não os tem.
    - **Vista geral:** lado a lado com a original.

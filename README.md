@@ -49,7 +49,7 @@ Para um escritório real, o passo a passo completo (levantamento pelo site, logo
 |---|---|
 | `scripts/extrair_marca.py` | lê o site (inclusive SPA) e gera um brand.json de rascunho com cores, fontes, contatos e logos candidatas |
 | `scripts/mascara_logo.py` | limpa logo com textura, brilho ou relevo para virar máscara vetorizável |
-| `scripts/vetorizar_simbolo.py` | vetoriza o símbolo com cantos vivos, retas retas, curvas em Bézier e fios de separação por operação booleana |
+| `scripts/vetorizar_simbolo.py` | vetoriza o símbolo com cantos vivos, retas exatas (encaixadas na horizontal/vertical e alinhadas entre si), curvas em Bézier e fios de separação por operação booleana |
 | `scripts/logo_svg.py` | monta símbolo + texto em curvas com kerning real (HarfBuzz) em várias cores |
 | `scripts/baixar_fontes.py` | baixa do Google Fonts e gera TTFs estáticos com nomes que o Word entende |
 | `scripts/gerar_docx.py` | timbrado Word; com `--conteudo`, converte Markdown em documento pronto |
