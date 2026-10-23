@@ -17,7 +17,7 @@ tudo ──► checar_white_label.py ──► ok para enviar
 ## Instalação
 
 ```bash
-git clone git@github.com:gouveaero/papel-timbrado.git ~/.claude/skills/papel-timbrado
+git clone git@github.com:gouveaero/papel-timbrado-roberth-freitas.git ~/.claude/skills/papel-timbrado
 pip install fonttools python-docx pillow numpy scipy scikit-image skia-pathops playwright
 python -m playwright install chromium
 brew install pandoc harfbuzz poppler
