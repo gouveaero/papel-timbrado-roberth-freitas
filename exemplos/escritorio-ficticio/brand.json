@@ -23,8 +23,19 @@
     "papel": "#FFFFFF"
   },
   "fontes": {
-    "titulo": {"familia": "Cormorant Garamond", "regular": "fonts/CormorantGaramond-SemiBold.ttf", "bold": "fonts/CormorantGaramond-Bold.ttf", "italic": "fonts/CormorantGaramond-Italic.ttf"},
-    "texto": {"familia": "Source Sans 3", "regular": "fonts/SourceSans3-Regular.ttf", "bold": "fonts/SourceSans3-Bold.ttf", "italic": "fonts/SourceSans3-Italic.ttf", "semibold": "fonts/SourceSans3-SemiBold.ttf"}
+    "titulo": {
+      "familia": "Cormorant Garamond",
+      "regular": "fonts/CormorantGaramond-SemiBold.ttf",
+      "bold": "fonts/CormorantGaramond-Bold.ttf",
+      "italic": "fonts/CormorantGaramond-Italic.ttf"
+    },
+    "texto": {
+      "familia": "Source Sans 3",
+      "regular": "fonts/SourceSans3-Regular.ttf",
+      "bold": "fonts/SourceSans3-Bold.ttf",
+      "italic": "fonts/SourceSans3-Italic.ttf",
+      "semibold": "fonts/SourceSans3-SemiBold.ttf"
+    }
   },
   "logo": {
     "papel": "logo/logo-assinatura-bronze.svg",
@@ -32,7 +43,145 @@
     "escuro": "logo/logo-assinatura-claro.svg",
     "simbolo": "logo/logo-simbolo-bronze.svg",
     "simbolo_png": "logo/logo-simbolo-bronze.png",
-    "simbolo_escuro": "logo/logo-simbolo-claro.svg"
+    "simbolo_escuro": "logo/logo-simbolo-claro.svg",
+    "escuro_png": "logo/logo-assinatura-claro.png",
+    "preto": "logo/logo-assinatura-preto.svg",
+    "branco": "logo/logo-assinatura-branco.svg",
+    "simbolo_preto": "logo/logo-simbolo-preto.svg",
+    "simbolo_branco": "logo/logo-simbolo-branco.svg"
   },
-  "documento": {"autor": "Almeida & Prado Advogados", "local": "Cidade/UF", "logo_mm": 54, "marca_dagua_pdf": true, "marca_dagua_docx": false}
+  "documento": {
+    "autor": "Almeida & Prado Advogados",
+    "local": "Cidade/UF",
+    "logo_mm": 54,
+    "marca_dagua_pdf": true,
+    "marca_dagua_docx": false
+  },
+  "manual": {
+    "versao": "1.0",
+    "data": "janeiro de 2026",
+    "sobre": {
+      "titulo": "O escritório",
+      "abertura": "Texto de abertura sobre a origem e a proposta do escritório, tirado do site ou da apresentação institucional.",
+      "paragrafos": [
+        "Parágrafo sobre quem lidera o escritório e em que áreas atua. Use só informação pública ou confirmada pelo cliente."
+      ],
+      "citacao": {
+        "texto": "Frase de posicionamento do sócio, entre aspas.",
+        "autor": "Nome do Advogado"
+      },
+      "missao": "Missão como aparece no site.",
+      "visao": "Visão como aparece no site.",
+      "valores": [
+        {
+          "nome": "Ética",
+          "texto": "Descrição curta"
+        },
+        {
+          "nome": "Proximidade",
+          "texto": "Descrição curta"
+        }
+      ],
+      "areas": [
+        "Direito Empresarial",
+        "Direito Tributário",
+        "Contratos"
+      ],
+      "voz": [
+        "Como a marca fala, em uma linha.",
+        "Outra regra de tom."
+      ],
+      "fonte": "Fonte dos textos e data da consulta."
+    },
+    "presenca": {
+      "titulo": "Presença digital: pontos de atenção",
+      "intro": "Ajustes encontrados no levantamento.",
+      "itens": [
+        {
+          "canal": "Site",
+          "situacao": "O que foi encontrado.",
+          "recomendacao": "O que fazer."
+        }
+      ]
+    },
+    "protecao": {
+      "x_frac": 0.11,
+      "x_desc": "altura das letras de ADVOGADOS",
+      "multiplo": 2
+    },
+    "minimos": {
+      "assinatura_mm": 40,
+      "assinatura_px": 180,
+      "simbolo_mm": 8,
+      "simbolo_px": 32
+    },
+    "cores": [
+      {
+        "nome": "Azul-noite",
+        "hex": "#14213D",
+        "uso": "Fundos e títulos"
+      },
+      {
+        "nome": "Bronze",
+        "hex": "#9C6B30",
+        "uso": "Cor principal"
+      },
+      {
+        "nome": "Bronze escuro",
+        "hex": "#7A5224",
+        "uso": "Rótulos sobre branco"
+      },
+      {
+        "nome": "Areia",
+        "hex": "#D8B987",
+        "uso": "Destaques sobre escuro"
+      },
+      {
+        "nome": "Papel",
+        "hex": "#F6F3EC",
+        "uso": "Fundos suaves"
+      }
+    ],
+    "gradientes": [
+      {
+        "nome": "Bronze",
+        "stops": [
+          "#7A5224",
+          "#9C6B30",
+          "#C9A06A",
+          "#9C6B30"
+        ]
+      }
+    ],
+    "aplicacoes": [
+      {
+        "pdf": "saida/exemplo.pdf",
+        "pagina": 1,
+        "legenda": "Capa"
+      },
+      {
+        "pdf": "saida/exemplo.pdf",
+        "pagina": 2,
+        "legenda": "Página interna"
+      }
+    ],
+    "arquivos": [
+      [
+        "01 Manual de Marca.pdf",
+        "Este manual"
+      ],
+      [
+        "02 Logo / SVG e PNG",
+        "Logo em todas as versões"
+      ],
+      [
+        "03 Papel Timbrado",
+        "Timbrado Word e modelo de documento"
+      ],
+      [
+        "04 Fontes",
+        "Fontes da marca com licença"
+      ]
+    ]
+  }
 }

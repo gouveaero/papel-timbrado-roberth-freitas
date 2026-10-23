@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>$titulo_doc</title>
+<style>
+$fontes
+
+:root {
+  --tinta: $c_tinta;
+  --escuro: $c_escuro;
+  --primaria: $c_primaria;
+  --primaria-escura: $c_primaria_escura;
+  --primaria-clara: $c_primaria_clara;
+  --cinza: $c_cinza;
+  --linha: $c_linha;
+  --fundo-suave: $c_fundo_suave;
+  --f-titulo: "$f_titulo", Georgia, serif;
+  --f-texto: "$f_texto", "Helvetica Neue", Arial, sans-serif;
+  --f-logo: "$f_logo", var(--f-titulo);
+}
+@page { size: 297mm 210mm; margin: 0; }
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font: 400 9.5pt/1.6 var(--f-texto);
+  color: var(--tinta);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  counter-reset: pg;
+}
+
+/* ---------- página ---------- */
+.pg {
+  position: relative;
+  width: 297mm;
+  height: 209.6mm;
+  overflow: hidden;
+  padding: 17mm 20mm 18mm;
+  break-after: page;
+  counter-increment: pg;
+  background: #fff;
+}
+.pg:last-child { break-after: auto; }
+.pg.escura { background: var(--escuro); color: #fff; }
+.topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 7mm;
+}
+.olho {
+  font: 600 7.2pt var(--f-texto);
+  letter-spacing: .32em;
+  text-transform: uppercase;
+  color: var(--primaria);
+}
+.escura .olho { color: var(--primaria-clara); }
+.marca-topo { font: 500 6.8pt var(--f-texto); letter-spacing: .2em; text-transform: uppercase; color: var(--cinza); }
+.escura .marca-topo { color: rgba(255,255,255,.45); }
+h2 {
+  font: 700 25pt/1.1 var(--f-titulo);
+  margin: 0 0 6mm;
+  color: var(--escuro);
+  max-width: 170mm;
+}
+.escura h2 { color: #fff; }
+.rodape {
+  position: absolute;
+  left: 20mm; right: 20mm; bottom: 9mm;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: .5pt solid var(--linha);
+  padding-top: 2.5mm;
+  font: 400 6.5pt var(--f-texto);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--cinza);
+}
+.escura .rodape { border-top-color: rgba(255,255,255,.15); color: rgba(255,255,255,.4); }
+.rodape .n::before { content: counter(pg, decimal-leading-zero); font: 700 10pt var(--f-titulo); color: var(--primaria); letter-spacing: 0; }
+.escura .rodape .n::before { color: var(--primaria-clara); }
+p { margin: 0 0 3mm; }
+.lead { font: italic 400 13pt/1.42 var(--f-titulo); color: var(--primaria-escura); margin-bottom: 5mm; }
+.escura .lead { color: var(--primaria-clara); }
+.pequeno { font-size: 7.6pt; color: var(--cinza); }
+.cols { display: grid; gap: 12mm; }
+.c2 { grid-template-columns: 1fr 1fr; }
+.c3 { grid-template-columns: repeat(3, 1fr); }
+.c4 { grid-template-columns: repeat(4, 1fr); }
+.c-58 { grid-template-columns: 5fr 8fr; }
+.c-85 { grid-template-columns: 8fr 5fr; }
+.rot {
+  font: 600 6.6pt var(--f-texto);
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  color: var(--primaria-escura);
+  margin-bottom: 2mm;
+}
+.escura .rot { color: var(--primaria-clara); }
+
+/* ---------- capa e contracapa ---------- */
+.capa { padding: 0; }
+.capa .simb { position: absolute; right: -40mm; top: -12mm; height: 240mm; opacity: .085; }
+.capa .logo { position: absolute; left: 22mm; top: 24mm; width: 92mm; }
+.capa .titulo { position: absolute; left: 22mm; bottom: 34mm; }
+.capa .titulo .olho { margin-bottom: 5mm; }
+.capa .titulo h1 { font: 700 44pt/1 var(--f-titulo); margin: 0; color: #fff; }
+.capa .titulo .ver { margin-top: 5mm; font: 400 9pt var(--f-texto); color: rgba(255,255,255,.6); letter-spacing: .06em; }
+.capa .fio { position: absolute; left: 22mm; right: 22mm; bottom: 24mm; height: .6pt; background: rgba(224,174,46,.5); }
+.contra { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8mm; }
+.contra img { width: 34mm; }
+.contra .contatos { font: 400 8pt/1.7 var(--f-texto); color: rgba(255,255,255,.55); text-align: center; letter-spacing: .04em; }
+
+/* ---------- nota antes/depois ---------- */
+.zoom { border-radius: 2mm; overflow: hidden; background: var(--escuro); }
+.zoom img { display: block; width: 100%; height: 60mm; object-fit: cover; object-position: center; }
+.zoom .leg { font: 500 6.8pt var(--f-texto); letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.6); padding: 2.4mm 3mm; }
+.zoom.depois .leg { color: var(--primaria-clara); }
+
+/* ---------- sobre ---------- */
+.citacao { border-left: 2pt solid var(--primaria); padding: 1mm 0 1mm 5mm; margin: 4mm 0 5mm; font: italic 400 12pt/1.45 var(--f-titulo); color: var(--escuro); }
+.citacao span { display: block; margin-top: 2mm; font: 600 6.6pt var(--f-texto); font-style: normal; letter-spacing: .22em; text-transform: uppercase; color: var(--primaria-escura); }
+.caixa { background: var(--fundo-suave); border-radius: 2mm; padding: 5mm 6mm; }
+.caixa p { margin: 0; font-size: 8.8pt; }
+.valores { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm 6mm; margin-top: 4mm; }
+.valores b { display: block; font: 700 11pt var(--f-titulo); color: var(--escuro); }
+.valores span { font-size: 8pt; color: var(--cinza); }
+.tags { display: flex; flex-wrap: wrap; gap: 2mm; }
+.tags span { border: .6pt solid var(--linha); border-radius: 20mm; padding: 1.2mm 3.4mm; font-size: 7.8pt; color: var(--tinta); }
+ul.voz { list-style: none; padding: 0; margin: 0; }
+ul.voz li { padding-left: 5mm; position: relative; margin-bottom: 2.4mm; font-size: 8.8pt; }
+ul.voz li::before { content: ""; position: absolute; left: 0; top: 2mm; width: 2.4mm; height: .8pt; background: var(--primaria); }
+
+/* ---------- marca, versões ---------- */
+.palco { display: flex; align-items: center; justify-content: center; border-radius: 2mm; }
+.palco.branco { background: #fff; border: .5pt solid var(--linha); }
+.palco.preto { background: var(--escuro); }
+.palco.areia { background: var(--fundo-suave); }
+.anatomia { position: relative; }
+.anatomia .rotulos { display: flex; justify-content: space-between; margin-top: 4mm; }
+.anatomia .rotulos div { flex: 1; padding-right: 6mm; }
+.anatomia .rotulos b { display: block; font: 700 10pt var(--f-titulo); color: var(--escuro); margin-bottom: 1mm; }
+.anatomia .rotulos span { font-size: 8pt; color: var(--cinza); }
+.tile { border-radius: 2mm; height: 46mm; display: flex; align-items: center; justify-content: center; position: relative; }
+.tile .leg { position: absolute; left: 3.5mm; bottom: 2.6mm; font: 500 6.4pt var(--f-texto); letter-spacing: .14em; text-transform: uppercase; }
+
+/* ---------- proteção ---------- */
+.protecao { position: relative; display: inline-block; outline: .6pt dashed var(--primaria); }
+.protecao .x { position: absolute; background: rgba(180,133,14,.16); color: var(--primaria-escura); font: 600 6pt var(--f-texto); display: flex; align-items: center; justify-content: center; }
+.minimos .item { display: flex; align-items: flex-end; gap: 6mm; margin-bottom: 7mm; }
+.minimos .num { font: 700 20pt/1 var(--f-titulo); color: var(--escuro); }
+.minimos .num small { font: 500 8pt var(--f-texto); color: var(--cinza); margin-left: 1mm; }
+
+/* ---------- cores ---------- */
+.cor { border-radius: 2mm; overflow: hidden; border: .5pt solid var(--linha); background: #fff; }
+.cor .amostra { height: 30mm; }
+.cor .dados { padding: 3mm 3.6mm 3.4mm; }
+.cor .dados b { display: block; font: 700 10.5pt var(--f-titulo); color: var(--escuro); margin-bottom: 1mm; }
+.cor .dados code { display: block; font: 500 7.4pt var(--f-texto); color: var(--tinta); letter-spacing: .02em; }
+.cor .dados .uso { margin-top: 1.6mm; font-size: 7.2pt; line-height: 1.4; color: var(--cinza); }
+.grad { height: 14mm; border-radius: 2mm; }
+
+/* ---------- tipografia ---------- */
+.tipo { border-top: .6pt solid var(--linha); padding-top: 4mm; }
+.tipo .aa { font-size: 46pt; line-height: 1; color: var(--escuro); margin: 2mm 0 3mm; }
+.tipo .alfa { font-size: 9pt; line-height: 1.5; color: var(--tinta); word-break: break-all; }
+.tipo .uso { margin-top: 2mm; font-size: 7.6pt; color: var(--cinza); }
+.hier { margin-top: 2mm; }
+.hier .h-t { font: 700 20pt/1.15 var(--f-titulo); color: var(--escuro); }
+.hier .h-s { font: italic 400 11pt/1.4 var(--f-titulo); color: var(--primaria-escura); margin: 1mm 0 3mm; }
+.hier .h-r { font: 600 6.8pt var(--f-texto); letter-spacing: .3em; text-transform: uppercase; color: var(--primaria); }
+.hier .h-p { font: 400 9pt/1.6 var(--f-texto); color: var(--tinta); }
+
+/* ---------- aplicações ---------- */
+.apl { display: grid; gap: 8mm; align-items: start; }
+.apl figure { margin: 0; text-align: center; }
+.apl img { display: block; margin: 0 auto; max-width: 100%; max-height: 122mm; width: auto; border-radius: 1.4mm; box-shadow: 0 1.2mm 4mm rgba(0,0,0,.18); border: .4pt solid rgba(0,0,0,.08); }
+.apl figcaption { margin-top: 3mm; font: 500 7pt var(--f-texto); letter-spacing: .14em; text-transform: uppercase; color: var(--cinza); }
+
+/* ---------- usos incorretos ---------- */
+.errado { position: relative; }
+.errado .tile { height: 40mm; overflow: hidden; }
+.errado .tile::after {
+  content: "";
+  position: absolute; right: 3mm; top: 3mm;
+  width: 6mm; height: 6mm; border-radius: 50%;
+  background: #B3261E url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'><path d='M3 3l4 4M7 3l-4 4' stroke='white' stroke-width='1.3' stroke-linecap='round'/></svg>") center/70% no-repeat;
+}
+.errado .leg { margin-top: 2.4mm; font-size: 8pt; color: var(--tinta); }
+
+/* ---------- presença digital ---------- */
+table.pontos { width: 100%; border-collapse: collapse; font-size: 8pt; }
+table.pontos th { text-align: left; font: 600 6.4pt var(--f-texto); letter-spacing: .2em; text-transform: uppercase; color: var(--primaria-escura); border-bottom: .8pt solid var(--primaria); padding: 0 3mm 2mm 0; }
+table.pontos td { vertical-align: top; padding: 2.6mm 3mm 2.6mm 0; border-bottom: .4pt solid var(--linha); line-height: 1.45; }
+table.pontos td:first-child { font: 700 9pt/1.3 var(--f-titulo); color: var(--escuro); width: 44mm; }
+table.pontos td:last-child { color: var(--primaria-escura); width: 82mm; }
+
+/* ---------- arquivos ---------- */
+.arquivos div { display: grid; grid-template-columns: 82mm 1fr; gap: 6mm; padding: 2.6mm 0; border-bottom: .4pt solid var(--linha); }
+.arquivos b { font: 600 8.6pt var(--f-texto); color: var(--escuro); }
+.arquivos span { font-size: 8.4pt; color: var(--cinza); }
+</style>
+</head>
+<body>
+$paginas
+</body>
+</html>

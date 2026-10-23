@@ -1,6 +1,6 @@
 # papel-timbrado
 
-Skill do Claude Code que transforma a marca de um escritório (advocacia, contabilidade, consultoria) em papel timbrado de verdade: logo refeita em vetor, modelo Word com cabeçalho, rodapé, estilos e fontes embutidas, e PDF de apresentação com capa. Feita para entregar documentos na identidade visual de um parceiro em modelo white label, com uma trava que impede o nome de quem executa de vazar no arquivo.
+Skill do Claude Code que transforma a marca de um escritório (advocacia, contabilidade, consultoria) em papel timbrado de verdade: logo refeita em vetor, modelo Word com cabeçalho, rodapé, estilos e fontes embutidas, PDF de apresentação com capa e manual de marca. Feita para entregar documentos na identidade visual de um parceiro em modelo white label, com uma trava que impede o nome de quem executa de vazar no arquivo.
 
 ```
 site do escritório ──► extrair_marca.py ──► brand.json (você confirma)
@@ -8,6 +8,7 @@ logo raster ──► upscale ──► mascara_logo.py ──► vetorização 
 fonte equivalente ──► baixar_fontes.py ───────────────────────┴► logo_svg.py ──► logo SVG/PNG
 brand.json ──► gerar_docx.py ──► Timbrado.docx  (o advogado escreve aqui)
 brand.json + .md/.docx ──► gerar_pdf.py ──► PDF com capa  (vai para o cliente)
+brand.json (bloco manual) ──► gerar_manual.py ──► Manual de Marca.pdf
 tudo ──► checar_white_label.py ──► ok para enviar
 ```
 
@@ -36,6 +37,7 @@ python3 scripts/logo_svg.py $E/logo-spec.json $E/logo
 python3 scripts/gerar_docx.py $E/brand.json $E/saida/timbrado.docx
 python3 scripts/gerar_docx.py $E/brand.json $E/saida/exemplo.docx --conteudo $E/conteudo.md
 python3 scripts/gerar_pdf.py  $E/brand.json $E/conteudo.md $E/saida/exemplo.pdf
+python3 scripts/gerar_manual.py $E/brand.json $E/saida/manual.pdf
 python3 scripts/checar_white_label.py $E/saida/* --proibir "nome da sua empresa"
 ```
 
@@ -51,9 +53,11 @@ Para um escritório real, o passo a passo completo (levantamento pelo site, logo
 | `scripts/baixar_fontes.py` | baixa do Google Fonts e gera TTFs estáticos com nomes que o Word entende |
 | `scripts/gerar_docx.py` | timbrado Word; com `--conteudo`, converte Markdown em documento pronto |
 | `scripts/gerar_pdf.py` | PDF com capa e timbre em todas as páginas, a partir de .md ou .docx |
+| `scripts/gerar_manual.py` | manual de marca em PDF: nota sobre a logo, escritório, versões, proteção, cores, tipografia, aplicações, usos incorretos, presença digital |
 | `scripts/previa_docx.py` | prévia do .docx em PNG, sem precisar de Word |
 | `scripts/checar_white_label.py` | procura termos proibidos e caminhos locais no texto, no XML e nos metadados |
 | `assets/documento.html` | modelo do PDF |
+| `assets/manual.html` | modelo do manual de marca |
 | `references/` | logo em vetor passo a passo e referência dos JSON |
 | `exemplos/escritorio-ficticio/` | marca inventada para teste |
 

@@ -48,6 +48,33 @@ Caminhos relativos são resolvidos a partir da pasta do próprio JSON.
 
 Campos que começam com `_` são anotações e são ignorados.
 
+Chaves extras de `logo` usadas pelo manual: `escuro_png`, `preto`, `branco`, `simbolo_preto`, `simbolo_branco`.
+
+### Bloco `manual` (gerar_manual.py)
+
+```json
+"manual": {
+  "versao": "1.0", "data": "outubro de 2026",
+  "nota": {"titulo": "...", "paragrafos": ["..."], "antes": "logo-original.png", "recorte": 0.30,
+           "legenda_antes": "...", "legenda_depois": "..."},
+  "sobre": {"titulo": "O escritório", "abertura": "...", "paragrafos": ["..."],
+            "citacao": {"texto": "...", "autor": "..."}, "missao": "...", "visao": "...",
+            "valores": [{"nome": "...", "texto": "..."}], "areas": ["..."], "voz": ["..."], "fonte": "..."},
+  "presenca": {"titulo": "...", "intro": "...", "itens": [{"canal": "...", "situacao": "...", "recomendacao": "..."}]},
+  "fonte_logo": {"familia": "Cinzel", "arquivo": "fonts/Cinzel-Bold.ttf", "uso": "Exclusiva da logo."},
+  "protecao": {"x_frac": 0.105, "x_desc": "altura das letras do descritor", "multiplo": 2},
+  "minimos": {"assinatura_mm": 35, "assinatura_px": 160, "simbolo_mm": 8, "simbolo_px": 32},
+  "cores": [{"nome": "...", "hex": "#...", "uso": "..."}],
+  "gradientes": [{"nome": "...", "stops": ["#...", "#..."]}],
+  "aplicacoes": [{"pdf": "caminho.pdf", "pagina": 1, "legenda": "..."}, {"imagem": "caminho.png", "legenda": "..."}],
+  "arquivos": [["01 Manual de Marca.pdf", "descrição"]]
+}
+```
+
+- `nota.antes` é a logo raster antiga. O manual amplia o mesmo trecho dela e do vetor novo, lado a lado. `recorte` é a fração da largura mostrada (padrão 0.30, só o símbolo).
+- `protecao.x_frac` é a altura de x como fração da altura total da assinatura.
+- Sem `cores`, o manual usa `brand.cores` cru.
+
 ## logo-spec.json
 
 ```json

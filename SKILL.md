@@ -10,6 +10,7 @@ Transforma a marca de um escritório em três coisas que ele usa no dia a dia:
 1. **Logo em vetor** (SVG + PNG transparente, em dourado/cor da marca, claro, preto e branco).
 2. **Timbrado Word** (`.docx`): cabeçalho com logo, rodapé com contatos e paginação, estilos nomeados (Title, Heading, Ementa, Assinatura, Pendente...) e fontes embutidas. É onde o advogado escreve.
 3. **PDF de apresentação**: capa escura sangrada + miolo com cabeçalho, rodapé, paginação e marca d'água. É o que vai para o cliente final.
+4. **Manual de marca** (PDF A4 paisagem) e **pacote de entrega** (pasta + zip com manual, logos, timbrado, modelo e fontes).
 
 Tudo sai de um `brand.json` por escritório. Os scripts estão em `scripts/`; o modelo do PDF em `assets/documento.html`.
 
@@ -74,7 +75,20 @@ python3 scripts/checar_white_label.py <arquivos...> --proibir "nome da executora
 
 Varre texto, XML interno do .docx, metadados e bytes do PDF, sem diferenciar acentos e maiúsculas, e barra caminhos absolutos (`/Users/...`). Os termos também podem vir de `PAPEL_TIMBRADO_PROIBIDOS` ou de `scripts/proibidos.local.json` (ignorado pelo git). **Rode antes de qualquer envio.** Se sair código 1, não envie.
 
-### 6. Aprovação
+### 6. Manual de marca e pacote
+
+```bash
+python3 scripts/gerar_manual.py <cliente>/marca/brand.json "<entrega>/01 Manual de Marca.pdf"
+```
+
+Páginas: capa, nota sobre a reconstrução da logo (com antes e depois ampliados), o escritório (história, missão, visão, valores, áreas, tom de voz), assinatura, versões, área de proteção e tamanho mínimo, cores (HEX, RGB, CMYK aproximado), tipografia, aplicações, usos incorretos, presença digital, arquivos entregues e contracapa. Tudo vem do bloco `manual` do brand.json. As páginas opcionais (`nota`, `sobre`, `presenca`, `aplicacoes`, `arquivos`) só entram se existirem.
+
+- **Pesquise antes de escrever "o escritório":** site (textos institucionais, equipe, áreas), Instagram (bio), whois do registro.br (data e titular do domínio) e DNS (`dig MX`), para saber se os e-mails publicados existem. Guarde a pesquisa completa num arquivo interno; no manual entra só o que é público e útil ao cliente.
+- **Resumo de busca na web não é fonte.** Número, prêmio ou estatística só entra se aparecer no site ou em documento do próprio escritório.
+- **A nota sobre a logo é diplomática:** explica a limitação técnica do arquivo antigo, sem criticar o desenho, e deixa claro que a marca é a mesma.
+- **Pacote:** `01 Manual de Marca.pdf`, `02 Logo/SVG` e `02 Logo/PNG` (nomes legíveis, sem acento), `03 Papel Timbrado` (timbrado, modelo .docx e .pdf), `04 Fontes` (TTF + licença OFL). Zip com `zip -qr -X`, sem `.DS_Store`. Rode o `checar_white_label.py` no pacote inteiro antes de zipar.
+
+### 7. Aprovação
 
 Mostre ao usuário as páginas do PDF em PNG (`pdftoppm -r 70 -png`), a prévia do .docx e o comparativo da logo. Nada vai para o escritório parceiro sem o OK de quem pediu.
 
@@ -95,9 +109,11 @@ Mostre ao usuário as páginas do PDF em PNG (`pdftoppm -r 70 -png`), a prévia 
 | `scripts/baixar_fontes.py` | Google Fonts → TTFs estáticos com nomes de Word |
 | `scripts/gerar_docx.py` | brand.json → timbrado .docx; com `--conteudo`, documento pronto |
 | `scripts/gerar_pdf.py` | brand.json + .md/.docx → PDF com capa e timbre |
+| `scripts/gerar_manual.py` | brand.json → manual de marca em PDF (A4 paisagem) |
 | `scripts/previa_docx.py` | .docx → PNG sem Word |
 | `scripts/checar_white_label.py` | trava de termos proibidos e caminhos |
 | `assets/documento.html` | modelo do PDF (CSS de página, capa, tipografia) |
+| `assets/manual.html` | modelo do manual de marca |
 | `references/logo-vetor.md` | passo a passo da logo + fontes livres equivalentes |
 | `references/brand-json.md` | campos do brand.json e do logo-spec.json |
 | `exemplos/escritorio-ficticio/` | marca inventada para testar tudo de ponta a ponta |
