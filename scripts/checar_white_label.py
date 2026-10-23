@@ -41,8 +41,10 @@ def textos(path):
     elif ext == "pdf":
         yield "texto do PDF", subprocess.run(["pdftotext", "-q", path, "-"], capture_output=True, text=True).stdout
         yield "metadados do PDF", subprocess.run(["pdfinfo", path], capture_output=True, text=True).stdout
-        bruto = open(path, "rb").read().decode("latin-1")
-        yield "bytes do PDF", bruto
+        # só a parte não comprimida (dicionários, metadados XMP): os streams binários de fonte e
+        # imagem dão falso positivo por acaso com termos curtos
+        bruto = re.sub(rb"stream\r?\n.*?endstream", b"", open(path, "rb").read(), flags=re.S)
+        yield "estrutura do PDF", bruto.decode("latin-1")
     else:
         yield "arquivo", open(path, encoding="utf-8", errors="replace").read()
     yield "nome do arquivo", os.path.basename(path)

@@ -132,30 +132,42 @@ def montar_html(brand, meta, corpo, com_capa=True):
     local_data = ", ".join(v for v in [meta.get("local") or brand.get("documento", {}).get("local"), meta.get("date")] if v)
     esc = html.escape
 
+    resp = brand.get("responsavel") or {}
+    # OAB não quebra no meio ("OAB/AP" numa linha e o número na outra)
+    preparado = " · ".join(v for v in [resp.get("nome"), (resp.get("oab") or "").replace(" ", "\u00a0")] if v)
+    contato_txt = " · ".join(v for v in [contatos.get("telefone"), contatos.get("email"), brand.get("site")] if v)
+    rotulo = " · ".join(v for v in [tipo, meta.get("referencia")] if v)
+
     capa = ""
     if com_capa:
-        dados = [(k, v) for k, v in [("Destinatário", meta.get("cliente")), ("Local e data", local_data),
-                                     ("Referência", meta.get("referencia"))] if v]
+        dados = [(k, v) for k, v in [("Destinatário", meta.get("cliente")), ("Preparado por", preparado),
+                                     ("Local e data", local_data)] if v]
         dados_html = "".join(f'<div><div class="k">{esc(k)}</div><div class="v">{esc(v)}</div></div>' for k, v in dados)
         simb = brand["logo"].get("simbolo_escuro") or brand["logo"].get("simbolo")
+        contato_html = ""
+        if contato_txt or contatos.get("endereco"):
+            contato_html = ('<div class="contatos"><div class="k">Contato</div>'
+                            f'<div class="v">{esc(contato_txt)}</div>'
+                            + (f'<div class="end">{esc(contatos["endereco"])}</div>' if contatos.get("endereco") else "")
+                            + "</div>")
         capa = (
             '<section class="capa">'
             + (f'<img class="simbolo" src="{data_uri(caminho(brand, simb))}" alt="">' if simb else "")
             + f'<img class="logo" src="{data_uri(caminho(brand, brand["logo"]["escuro"]))}" alt="{esc(brand["nome"])}">'
             + '<div class="miolo">'
-            + (f'<div class="rotulo">{esc(tipo)}</div><div class="fio"></div>' if tipo else "")
+            + (f'<div class="rotulo">{esc(rotulo)}</div><div class="fio"></div>' if rotulo else "")
             + f'<h1>{esc(titulo)}</h1>'
             + (f'<div class="sub">{esc(meta["subtitle"])}</div>' if meta.get("subtitle") else "")
             + "</div>"
-            + (f'<div class="dados">{dados_html}</div>' if dados else "")
-            + f'<div class="contatos">{esc(l1)}<br>{esc(l2)}</div>'
+            + (f'<div class="dados" style="grid-template-columns:repeat({len(dados)},1fr)">{dados_html}</div>' if dados else "")
+            + contato_html
             + "</section>")
         abertura = ""
     else:
         linha = "   ·   ".join(v for v in [f"Destinatário: {meta['cliente']}" if meta.get("cliente") else "",
-                                           local_data, meta.get("referencia", "")] if v)
+                                           preparado, local_data] if v)
         abertura = ('<header class="abertura">'
-                    + (f'<div class="rotulo">{esc(tipo)}</div>' if tipo else "")
+                    + (f'<div class="rotulo">{esc(rotulo)}</div>' if rotulo else "")
                     + f"<h1>{esc(titulo)}</h1>"
                     + (f'<div class="sub">{esc(meta["subtitle"])}</div>' if meta.get("subtitle") else "")
                     + (f'<div class="meta">{esc(linha)}</div>' if linha else "")

@@ -122,28 +122,28 @@ body {
 }
 .capa .dados {
   position: absolute;
-  left: 24mm; right: 24mm; bottom: 34mm;
+  left: 24mm; right: 24mm; bottom: 40mm;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
   gap: 8mm;
   border-top: .6pt solid rgba(224,174,46,.55);
   padding-top: 5mm;
 }
-.capa .dados .k {
+.capa .k {
   font: 600 6.5pt var(--f-texto);
   letter-spacing: .28em;
   text-transform: uppercase;
   color: var(--primaria-clara);
   margin-bottom: 1.6mm;
 }
-.capa .dados .v { font: 400 9.5pt/1.45 var(--f-texto); color: rgba(255,255,255,.88); }
+.capa .dados .v { font: 400 9.5pt/1.45 var(--f-texto); color: rgba(255,255,255,.9); }
 .capa .contatos {
   position: absolute;
   left: 24mm; right: 24mm; bottom: 15mm;
-  font: 400 6.8pt/1.6 var(--f-texto);
-  letter-spacing: .04em;
-  color: rgba(255,255,255,.5);
+  padding-top: 4mm;
+  border-top: .4pt solid rgba(255,255,255,.12);
 }
+.capa .contatos .v { font: 500 8.6pt/1.5 var(--f-texto); color: rgba(255,255,255,.82); letter-spacing: .02em; }
+.capa .contatos .end { font: 400 7.4pt/1.5 var(--f-texto); color: rgba(255,255,255,.5); margin-top: .6mm; }
 
 /* ---------- miolo ---------- */
 .corpo { padding-top: 1mm; }

@@ -560,8 +560,9 @@ def bloco_titulo(doc, meta, brand):
         corpo.remove(p._p)
         primeiro.addprevious(p._p)
         return p
-    if meta.get("tipo"):
-        novo(meta["tipo"], "Rótulo")
+    rotulo = " · ".join(v for v in [meta.get("tipo"), meta.get("referencia")] if v)
+    if rotulo:
+        novo(rotulo, "Rótulo")
     if meta.get("title"):
         novo(meta["title"], "Title")
     if meta.get("subtitle"):
@@ -569,11 +570,12 @@ def bloco_titulo(doc, meta, brand):
     partes = []
     if meta.get("cliente"):
         partes.append(f"Destinatário: {meta['cliente']}")
+    resp = brand.get("responsavel") or {}
+    if resp.get("nome"):
+        partes.append(" · ".join(v for v in [resp.get("nome"), resp.get("oab")] if v))
     local_data = ", ".join(v for v in [meta.get("local") or brand.get("documento", {}).get("local"), meta.get("date")] if v)
     if local_data:
         partes.append(local_data)
-    if meta.get("referencia"):
-        partes.append(meta["referencia"])
     if partes:
         novo("   ·   ".join(partes), "Meta")
 

@@ -146,10 +146,43 @@ def pg_marca(brand, man):
               ("Descritor", "Identifica a natureza do escritório e completa a assinatura.")]
     rot = "".join(f"<div><b>{esc(a)}</b><span>{esc(b)}</span></div>" for a, b in man.get("anatomia", linhas))
     return (f'<section class="pg">{topo("A marca", brand)}'
-            f'<h2>Assinatura principal</h2>'
-            f'<div class="palco branco" style="height:92mm"><img src="{logo(brand, "papel")}" style="width:58%" alt=""></div>'
+            f'<h2>A logo</h2>'
+            f'<div class="cols" style="grid-template-columns:1.75fr 1fr;gap:6mm">'
+            f'<div><div class="palco branco" style="height:88mm"><img src="{logo(brand, "papel")}" style="width:78%" alt=""></div>'
+            f'<div class="rot" style="margin-top:2.6mm">Assinatura completa · uso principal</div></div>'
+            f'<div><div class="palco preto" style="height:88mm"><img src="{logo(brand, "simbolo_escuro", "simbolo")}" style="height:70%" alt=""></div>'
+            f'<div class="rot" style="margin-top:2.6mm">Logomarca · avatar, selo, favicon</div></div></div>'
             f'<div class="anatomia"><div class="rotulos">{rot}</div></div>'
-            f'{rodape(brand, "A marca")}</section>')
+            f'{rodape(brand, "A logo")}</section>')
+
+
+def fontes_logo(man):
+    fl = man.get("fonte_logo")
+    if not fl:
+        return []
+    return fl if isinstance(fl, list) else [fl]
+
+
+PESOS = {"thin": 100, "light": 300, "regular": 400, "medium": 500, "semibold": 600, "bold": 700, "extrabold": 800, "black": 900}
+
+
+def pg_tipo_logo(brand, man):
+    fls = fontes_logo(man)
+    blocos = []
+    for i, f in enumerate(fls):
+        fam = f"LogoFonte{i}"
+        amostra = f.get("amostra", brand.get("nome_curto", "").upper())
+        blocos.append(
+            f'<div class="tipo"><div class="rot">{esc(f["familia"])} {esc(f.get("peso", ""))}</div>'
+            f'<div style="font-family:{fam};font-size:30pt;line-height:1.05;color:var(--escuro);margin:3mm 0 3mm">{esc(amostra)}</div>'
+            f'<div class="alfa" style="font-family:{fam};word-break:normal">ABCDEFGHIJKLM NOPQRSTUVWXYZ<br>0123456789</div>'
+            f'<div class="uso">{esc(f.get("uso", ""))}</div></div>')
+    notas = "".join(f"<li>{esc(n)}</li>" for n in man.get("construcao", []))
+    return (f'<section class="pg">{topo("A marca", brand)}<h2>Tipografia da logo</h2>'
+            f'<div class="cols" style="grid-template-columns:repeat({max(len(blocos), 1)},1fr) 1.05fr;gap:9mm">{"".join(blocos)}'
+            f'<div class="tipo"><div class="rot">Construção</div><ul class="voz">{notas}</ul></div></div>'
+            f'<div class="palco areia" style="height:52mm;margin-top:7mm"><img src="{logo(brand, "papel")}" style="width:52%" alt=""></div>'
+            f'{rodape(brand, "Tipografia da logo")}</section>')
 
 
 def pg_versoes(brand, man):
@@ -231,15 +264,12 @@ def pg_tipografia(brand, man):
                 f'<div class="aa" style="font-family:{css_fam}{extra}">Aa</div>'
                 f'<div class="alfa" style="font-family:{css_fam}{extra}">{alfa}</div>'
                 f'<div class="uso">{esc(uso)}</div></div>')
-    fl = man.get("fonte_logo")
     blocos = [bloco(ft, "var(--f-titulo)", "Títulos, subtítulos em itálico, números de página.", ";font-weight:700"),
               bloco(fx, "var(--f-texto)", "Texto corrido, rótulos em caixa alta espaçada, tabelas e rodapés.")]
-    if fl:
-        blocos.append(bloco(fl["familia"], "var(--f-logo)", fl.get("uso", "Exclusiva da logo."), ";font-weight:700"))
     hier = ('<div class="hier"><div class="rot">Hierarquia</div><div class="h-r">Parecer</div>'
             '<div class="h-t">Título do documento</div><div class="h-s">Subtítulo em itálico, na cor da marca</div>'
             '<div class="h-p">Texto corrido em corpo 10, com entrelinha generosa e alinhamento justificado nos documentos.</div></div>')
-    return (f'<section class="pg">{topo("Identidade", brand)}<h2>Tipografia</h2>'
+    return (f'<section class="pg">{topo("Identidade", brand)}<h2>Tipografia dos documentos</h2>'
             f'<div class="cols" style="grid-template-columns:repeat({len(blocos)},1fr) 1.1fr;gap:9mm">{"".join(blocos)}<div class="tipo">{hier}</div></div>'
             '<p class="pequeno" style="margin-top:5mm">Todas as fontes são gratuitas (licença SIL Open Font License) e estão na pasta Fontes deste pacote.</p>'
             f'{rodape(brand, "Tipografia")}</section>')
@@ -329,7 +359,10 @@ def montar(brand):
         pgs.append(pg_nota(brand, man))
     if man.get("sobre"):
         pgs.append(pg_sobre(brand, man))
-    pgs += [pg_marca(brand, man), pg_versoes(brand, man), pg_protecao(brand, man), pg_cores(brand, man), pg_tipografia(brand, man)]
+    pgs.append(pg_marca(brand, man))
+    if fontes_logo(man):
+        pgs.append(pg_tipo_logo(brand, man))
+    pgs += [pg_versoes(brand, man), pg_protecao(brand, man), pg_cores(brand, man), pg_tipografia(brand, man)]
     if man.get("aplicacoes"):
         pgs.append(pg_aplicacoes(brand, man))
     pgs.append(pg_incorretos(brand, man))
@@ -340,10 +373,11 @@ def montar(brand):
     pgs.append(pg_contra(brand))
 
     css_logo = ""
-    fl = man.get("fonte_logo")
-    if fl and fl.get("arquivo"):
-        css_logo = (f'@font-face {{ font-family: "{fl["familia"]}"; font-weight: 700; '
-                    f'src: url("{data_uri(caminho(brand, fl["arquivo"]))}") format("truetype"); }}')
+    for i, f in enumerate(fontes_logo(man)):
+        if f.get("arquivo"):
+            css_logo += (f'@font-face {{ font-family: "LogoFonte{i}"; '
+                         f'src: url("{data_uri(caminho(brand, f["arquivo"]))}") format("truetype"); }}\n')
+    fl = (fontes_logo(man) or [{}])[0]
     c = brand["cores"]
     vals = {
         "titulo_doc": esc(f"Manual de Marca · {brand['nome']}"),

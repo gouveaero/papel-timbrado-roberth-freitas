@@ -182,6 +182,31 @@
         "04 Fontes",
         "Fontes da marca com licença"
       ]
+    ],
+    "fonte_logo": [
+      {
+        "familia": "Cormorant Garamond",
+        "peso": "Bold",
+        "arquivo": "fonts/CormorantGaramond-Bold.ttf",
+        "amostra": "ALMEIDA & PRADO",
+        "uso": "Nome do escritório."
+      },
+      {
+        "familia": "Source Sans 3",
+        "peso": "SemiBold",
+        "arquivo": "fonts/SourceSans3-SemiBold.ttf",
+        "amostra": "ADVOGADOS",
+        "uso": "Descritor, espaçado."
+      }
+    ],
+    "construcao": [
+      "O símbolo é desenho próprio, em vetor.",
+      "Nome em uma linha; descritor espaçado, alinhado à esquerda do nome."
     ]
+  },
+  "responsavel": {
+    "nome": "Dr. Nome do Advogado",
+    "cargo": "Advogado",
+    "oab": "OAB/UF 0.000"
   }
 }

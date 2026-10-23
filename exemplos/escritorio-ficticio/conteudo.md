@@ -5,7 +5,7 @@ subtitle: Como títulos, listas, tabelas, citações e pendências aparecem no P
 cliente: Equipe interna
 date: 1º de janeiro de 2026
 local: Cidade/UF
-referencia: Memorando nº 01/2026
+referencia: Nº 01/2026
 cabecalho: Memorando · Modelo de documento
 ---
 

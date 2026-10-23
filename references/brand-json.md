@@ -12,6 +12,7 @@ Caminhos relativos são resolvidos a partir da pasta do próprio JSON.
   "site": "dominio.com.br",
   "contatos": {"endereco": "Rua X, 100, Bairro · Cidade/UF", "telefone": "(00) 00000-0000", "email": "contato@dominio.com.br"},
   "oab": null,                                 // "OAB/UF 0.000" entra no rodapé quando preenchido
+  "responsavel": {"nome": "Dr. Nome", "cargo": "Advogado", "oab": "OAB/UF 0.000"},  // "Preparado por" na capa e no bloco de título
   "cores": {
     "tinta": "#1A1A1A",            // texto corrido
     "escuro": "#121212",           // títulos e fundo da capa
@@ -61,7 +62,9 @@ Chaves extras de `logo` usadas pelo manual: `escuro_png`, `preto`, `branco`, `si
             "citacao": {"texto": "...", "autor": "..."}, "missao": "...", "visao": "...",
             "valores": [{"nome": "...", "texto": "..."}], "areas": ["..."], "voz": ["..."], "fonte": "..."},
   "presenca": {"titulo": "...", "intro": "...", "itens": [{"canal": "...", "situacao": "...", "recomendacao": "..."}]},
-  "fonte_logo": {"familia": "Cinzel", "arquivo": "fonts/Cinzel-Bold.ttf", "uso": "Exclusiva da logo."},
+  "fonte_logo": [{"familia": "Cinzel", "peso": "Bold", "arquivo": "fonts/Cinzel-Bold.ttf", "amostra": "NOME", "uso": "..."}],
+  "construcao": ["regras de montagem da logo, uma por item"],
+  "anatomia": [["Logomarca", "..."], ["Nome", "..."], ["Descritor", "..."]],
   "protecao": {"x_frac": 0.105, "x_desc": "altura das letras do descritor", "multiplo": 2},
   "minimos": {"assinatura_mm": 35, "assinatura_px": 160, "simbolo_mm": 8, "simbolo_px": 32},
   "cores": [{"nome": "...", "hex": "#...", "uso": "..."}],
@@ -74,6 +77,8 @@ Chaves extras de `logo` usadas pelo manual: `escuro_png`, `preto`, `branco`, `si
 - `nota.antes` é a logo raster antiga. O manual amplia o mesmo trecho dela e do vetor novo, lado a lado. `recorte` é a fração da largura mostrada (padrão 0.30, só o símbolo).
 - `protecao.x_frac` é a altura de x como fração da altura total da assinatura.
 - Sem `cores`, o manual usa `brand.cores` cru.
+- `fonte_logo` (lista, uma por papel na logo) gera a página "Tipografia da logo", com a amostra composta na fonte; a tipografia dos documentos fica em página própria.
+- Capa do PDF: `rótulo` = tipo + referência; dados = destinatário, preparado por (`responsavel`), local e data; bloco de contato com telefone, e-mail, site e endereço.
 
 ## logo-spec.json
 

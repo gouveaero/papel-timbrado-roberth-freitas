@@ -10,13 +10,26 @@ O caso comum: o escritório só tem a logo do site, um PNG de ~500 px com dourad
 
 ## 2. Símbolo
 
-1. **Upscale de precisão** no Magnific: `creations_upload_image` (URL pública) → `images_upscale` com `mode: ultra-sublime`, `scale: 4x`, `grain: 0`, `sharpness: ~10`. Custo típico: ~180 créditos por imagem. Avise antes e confira com `simulate_cost`.
-   - O upscale achata o fundo transparente em preto e pode criar franja colorida na borda. Isso não atrapalha, porque só a silhueta interessa.
-2. **Máscara**: `python3 scripts/mascara_logo.py upscale.jpg mascara.png --alpha-de original.png --limiar 45 --buracos 400`
-   - `--alpha-de` recorta pela transparência do PNG original e elimina a sombra.
-   - Comece com `--buracos` baixo (só pontinhos de textura). Furo grande pode ser desenho de verdade.
-   - **Fios finos de separação** (uma letra passando na frente da outra) quase sempre saem quebrados. Redesenhe: preencha os furos na região, ajuste uma curva (`numpy.polyfit` de x em função de y) pelos fragmentos que sobraram e desenhe o fio como linha contínua (PIL `ImageDraw.line`, `joint="curve"`). Em trechos retos, uma linha entre dois pontos medidos no zoom basta. Confira sempre num recorte ampliado.
-3. **Vetorizar**: envie a máscara (`creations_request_upload` → PUT do arquivo → `creations_finalize_upload`) e rode `images_to_svg` (~150 créditos). O retorno é um retângulo branco de fundo + um path preto composto. O `logo_svg.py` ignora o fundo (`ignorar_fill`).
+**Procure primeiro um canal alfa.** Favicon e logos PNG de site quase sempre têm transparência: o alfa é o contorno exato do desenho, sem a textura do dourado, do relevo e da sombra. Ampliado com bicúbica (16x de um favicon de ~370 px), vira uma silhueta lisa e fiel. Medir pelo brilho da imagem (limiar de luminância) perde as bordas escuras do relevo e deixa o traço fino demais.
+
+Sem alfa útil, faça upscale de precisão no Magnific (`images_upscale`, `ultra-sublime`, 4x, `grain: 0`) e gere a máscara com `scripts/mascara_logo.py`.
+
+1. **Silhueta sólida.** Preencha furos pequenos (textura) e feche os canais finos de separação que saíram quebrados. Eles voltam depois como vetor. Guarde os fragmentos dos fios para saber por onde passam.
+2. **Junções exatas.** Onde letras se cruzam (um triângulo entre duas letras, o fim de uma haste sobre uma perna), ajuste retas nas arestas, calcule os cantos pela interseção e repinte a região com geometria. É o que deixa canto vivo onde o desenho pede.
+3. **Fios de separação como traço.** Monte `fios.json` com curvas (pontos por Catmull-Rom; ajuste polinomial nos fragmentos, ancorado nos cantos) e retas (de canto a canto). A espessura é constante.
+4. **Vetorizar:** `python3 scripts/vetorizar_simbolo.py silhueta.png simbolo.svg --fios fios.json`.
+   - Contorno subpixel e cantos detectados por ângulo.
+   - Cada trecho entre cantos é suavizado, com os cantos fixos.
+   - Trecho longo e sem curvatura de um lado só vira reta.
+   - Ajuste Bézier cúbico com erro controlado (Schneider).
+   - Os fios são subtraídos por operação booleana (skia-pathops).
+   - Resultado típico: 80 a 130 segmentos, sem buracos nem serrilhado.
+5. **Conferir** em três níveis:
+   - **Coincidência com o alfa original:** acima de 95%. Os fios ficam de fora, porque o alfa não os tem.
+   - **Vista geral:** lado a lado com a original.
+   - **Zoom nas junções:** pontas, cantos e encontros dos fios. Um fio que termina antes do canto, um recorte na junção ou uma reta com ângulo diferente da aresta vizinha aparecem no zoom e passam na vista geral.
+
+A vetorização automática do Magnific (`images_to_svg`) serve como rascunho rápido, mas segue o serrilhado da máscara. Para entrega, use o `vetorizar_simbolo.py`.
 
 ## 3. Texto
 
